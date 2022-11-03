@@ -9,11 +9,9 @@ const MESSAGES = {
   pageLoaded: 'pageLoaded',
   update: 'update',
   listenAlongUpdate: 'listenAlongUpdate',
-  trackTwitch: 'trackTwitch',
   error: 'error',
 };
 
-const twitchSubPages = ['/directory', '/u', '/p', '/settings', '/s', '/wallet', '/subscriptions', '/drops']
 
 const CONTEXT_MENU = {
   track: 'track',
@@ -69,7 +67,7 @@ browser.contextMenus.removeAll().then(() => {
     id: CONTEXT_MENU.track,
     title: "Track current Tab with Discord RPC",
     contexts: ["page"],
-    documentUrlPatterns: ['https://*.youtube.com/*', 'https://*.twitch.tv/*']
+    documentUrlPatterns: ['https://*.youtube.com/*']
   });
 
   browser.contextMenus.create({
@@ -117,10 +115,7 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     return browser.storage.sync.set({ listeningAlongTabId: tabId });
   }
   if (tab.id !== $.trackedTabId) return
-  if (tab.url.includes('twitch.tv') && !twitchSubPages.some(page => tab.url.includes(page))) {
-    return browser.tabs.sendMessage(tab.id, { type: MESSAGES.update })
-  }
-  if (!tab.url.includes('youtube.com/watch?v=') && !tab.url.includes('twitch.tv')) {
+  if (!tab.url.includes('youtube.com/watch?v=')) {
     Activity.remove();
   }
 });

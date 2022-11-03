@@ -25,8 +25,8 @@ async function connectToDiscord() {
 
     // auth to discord
     const authInfo = await browser.storage.sync.get(['refresh_token']);
-    const { refresh_token } = await discord.login(authInfo.refresh_token);
-    browser.storage.sync.set({ refresh_token });
+    //const { refresh_token } = await discord.login(authInfo.refresh_token);
+    //browser.storage.sync.set({ refresh_token });
 
     discord.on('message', console.dir);
     discord.on('close', () => {
@@ -59,10 +59,10 @@ async function connectToServer() {
       server.conn = null;
 
       if (discord.conn) {
-        console.warn('Lost connection to the Discord Radio Server, trying to reconnect in 5s...');
+        console.warn('Lost connection to the Discord Radio Server, trying to reconnect in 1 minute...');
         browser.browserAction.setBadgeText({ text: '🔇' });
         if ($.trackedTabId) browser.browserAction.setBadgeText({ tabId: $.trackedTabId, text: '👀 🔇' });
-        browser.alarms.create('reconnect-server', { delayInMinutes: 5 / 60 });
+        browser.alarms.create('reconnect-server', { delayInMinutes: 60 });
       }
     });
 
@@ -89,10 +89,10 @@ async function connectToServer() {
     server.conn = null;
 
     if (discord.conn) {
-      console.warn('Could not connect to the Discord Radio Server, retrying in 5s...');
+      console.warn('Could not connect to the Discord Radio Server, retrying in 1 minute...');
       browser.browserAction.setBadgeText({ text: '🔇' });
       if ($.trackedTabId) browser.browserAction.setBadgeText({ tabId: $.trackedTabId, text: '👀 🔇' });
-      browser.alarms.create('reconnect-server', { delayInMinutes: 5 / 60 });
+      browser.alarms.create('reconnect-server', { delayInMinutes: 60 });
     }
   }
 }
@@ -173,7 +173,6 @@ class Activity {
   static _createActivity(data) {
     if (data.host && data.host !== discord.user.tag) return Activity._createListeningAlongActivity(data)
 
-    if (data.twitch) return Activity._createTwitchActivity(data);
     if (data.paused) return Activity._createPausedActivity(data);
 
     return Activity._createPlayingActivity(data);
@@ -257,34 +256,6 @@ class Activity {
         large_text: Activity._getRandomVibeText(),
         small_image: 'play-circle',
         small_text: 'Playing',
-      },
-      buttons,
-    };
-  }
-
-  static _createTwitchActivity(data) {
-    let buttons = [{ label: "📺 Watch the stream", url: data.URL }];
-
-    if (server.conn) {
-      buttons.unshift({
-        label: `🎉 Watch ${data.nrOfListeners > 0 ? `with ${data.nrOfListeners + 1} friends!` : `along!`}`,
-        url: `http://${server_uri}/d/${discord.user.tag.replace('#', '/')}`,
-      });
-    }
-
-    if (!data.URL) buttons = undefined;
-
-    return {
-      details: `Watching ${data.channelName}`,
-      state: `on: Twitch.tv`,
-      timestamps: {
-        start: data.startTime
-      },
-      assets: {
-        large_image: (data.mood !== 'none') ? `mood-${data.mood}` : 'image',
-        large_text: Activity._getRandomVibeText(),
-        small_image: 'twitch',
-        small_text: 'Twitch.',
       },
       buttons,
     };

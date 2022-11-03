@@ -3,8 +3,8 @@ const MESSAGES = {
 };
 
 const server_uri = 'discordradio.tk';
-const server_port = 80;
-const server_ws_port = 420;
+const server_port = 3000;
+const server_ws_port = 3001;
 const host = getHost();
 
 let player, hostPlayerState = {}, justCued = false;
