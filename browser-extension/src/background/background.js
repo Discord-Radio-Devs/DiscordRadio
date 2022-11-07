@@ -152,7 +152,9 @@ browser.tabs.onAttached.addListener((tabId, attachInfo) => {
 // communication with content.js
 browser.runtime.onMessage.addListener(async (request, sender) => {
   if ([MESSAGES.play, MESSAGES.pause, MESSAGES.seek, MESSAGES.newVideo, MESSAGES.newStream].includes(request.type)) {
-    if (request.data) Activity.set(request.data);
+    if (request.data) {
+      Activity.set(request.data);
+    }
   }
   else if (request.type === MESSAGES.listenAlongUpdate) {
     if (request.data) Activity.listenAlong(request.data);

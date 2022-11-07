@@ -138,7 +138,7 @@ function formatData() {
 
   if (document.querySelector('.title yt-formatted-string.ytd-video-primary-info-renderer')) {
     playerInfo.title = document.querySelector('.title yt-formatted-string.ytd-video-primary-info-renderer').innerText;
-    playerInfo.channelName = document.querySelector('.ytd-channel-name yt-formatted-string.ytd-channel-name').innerText;
+    playerInfo.channelName = document.querySelector('.style-scope ytd-video-owner-renderer').innerText.split('\n')[0];
   }
   else if (document.querySelector('#scriptTag')) {
     const info = JSON.parse(document.querySelector('#scriptTag')?.textContent);
